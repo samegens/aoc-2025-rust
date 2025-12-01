@@ -1,8 +1,8 @@
-use std::str::Lines;
 use common::InputReader;
+use std::str::Lines;
 
 fn main() {
-    let input_reader: InputReader = InputReader::new(8);
+    let input_reader: InputReader = InputReader::new(__DAY__);
     println!("Part 1: {}", solve_part1(input_reader.lines()));
     println!("Part 2: {}", solve_part2(input_reader.lines()));
 }
@@ -22,8 +22,7 @@ mod tests {
     static INPUT: &str = r#""#;
 
     #[test]
-    fn test_solve_part1()
-    {
+    fn test_solve_part1() {
         // Arrange
         let expected: i64 = 0;
 
@@ -35,8 +34,7 @@ mod tests {
     }
 
     #[test]
-    fn test_solve_part2()
-    {
+    fn test_solve_part2() {
         // Arrange
         let expected: i64 = 0;
 
