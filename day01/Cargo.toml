@@ -1,7 +1,8 @@
 [package]
-name = "day08"
+name = "day01"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 common = { path = "../common" }
+substring = "1.4.5"

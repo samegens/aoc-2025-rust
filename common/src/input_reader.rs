@@ -9,7 +9,7 @@ pub struct InputReader {
 
 impl InputReader {
     pub fn new(day_nr: u8) -> Self {
-        let path = format!("./input/{:02}.txt", day_nr);
+        let path = format!("../input/{:02}.txt", day_nr);
         let input = fs::read_to_string(&path).unwrap();
         InputReader { input }
     }
