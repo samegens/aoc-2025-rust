@@ -31,7 +31,7 @@ fn solve_part2(lines: Lines) -> i64 {
         let direction_char = line.chars().nth(0).unwrap();
         let amount: i32 = line.to_string().substring(1, line.len()).parse().unwrap();
         let sign = if direction_char == 'L' { -1 } else { 1 };
-        for i in 0..amount {
+        for _i in 0..amount {
             dial = (dial + 100 + sign) % 100;
             if dial == 0 {
                 nr_zeroes += 1;
@@ -71,7 +71,7 @@ L82
     }
 
     #[test]
-    fn test_solve_part2_with_R1000() {
+    fn test_solve_part2_with_r1000() {
         // Arrange
         let input: &str = r#"R1000
 "#;
@@ -101,7 +101,7 @@ L1
     }
 
     #[test]
-    fn test_solve_part2_with_L1000() {
+    fn test_solve_part2_with_l1000() {
         // Arrange
         let input: &str = r#"L1000
 "#;
