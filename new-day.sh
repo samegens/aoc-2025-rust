@@ -14,9 +14,9 @@ fi
 DAY=$((10#$1))
 DAY_WITH_LEADING_ZEROES=$(printf "%02d" "$DAY")
 
-# Create directory and copy template
+# Create directory and copy template (excluding build artifacts)
 mkdir -p "day$DAY_WITH_LEADING_ZEROES"
-cp -Rfv day-template/* "day$DAY_WITH_LEADING_ZEROES"
+rsync -av --exclude='target' day-template/ "day$DAY_WITH_LEADING_ZEROES/"
 
 # Replace placeholders in the copied files
 find "day$DAY_WITH_LEADING_ZEROES" -type f \( -name "*.rs" -o -name "*.toml" \) | while read -r file; do
@@ -31,5 +31,5 @@ touch "input/$DAY_WITH_LEADING_ZEROES.txt"
 # Add to workspace Cargo.toml if not already present
 if ! grep -q "'day$DAY_WITH_LEADING_ZEROES'" Cargo.toml; then
     echo "Adding day$DAY_WITH_LEADING_ZEROES to workspace"
-    sed -i "/members = \[/a\\   'day$DAY_WITH_LEADING_ZEROES'," Cargo.toml
+    sed -i "/^]$/i\\   'day$DAY_WITH_LEADING_ZEROES'," Cargo.toml
 fi
