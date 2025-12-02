@@ -14,8 +14,11 @@ fn solve_part1(line: String) -> i64 {
         .sum()
 }
 
-fn solve_part2(_: String) -> i64 {
-    0
+fn solve_part2(line: String) -> i64 {
+    parse_ranges(&line)
+        .into_iter()
+        .map(|range: Range<i64>| get_invalid_ids_part2(range).iter().sum::<i64>())
+        .sum()
 }
 
 fn get_invalid_ids_part1(range: Range<i64>) -> Vec<i64> {
@@ -37,6 +40,44 @@ fn is_valid_id_part1(id: i64) -> bool {
     }
 
     true
+}
+
+fn get_invalid_ids_part2(range: Range<i64>) -> Vec<i64> {
+    (range.start()..range.end() + 1)
+        .filter(|id: &i64| !is_valid_id_part2(*id))
+        .collect()
+}
+
+fn is_valid_id_part2(id: i64) -> bool {
+    let id_string: String = id.to_string();
+    let id_len: usize = id_string.len();
+
+    for i in 1..id_len / 2 + 1 {
+        let sub_id = id_string.substring(0, i);
+        if is_repeating(&id_string, sub_id) {
+            return false;
+        }
+    }
+
+    true
+}
+
+fn is_repeating(id_string: &String, sub_id: &str) -> bool {
+    let mut i = sub_id.len();
+    while i < id_string.len() {
+        if i + sub_id.len() > id_string.len() {
+            return false;
+        }
+
+        let next_possible_sub_id = id_string.substring(i, i + sub_id.len());
+        if next_possible_sub_id != sub_id {
+            return false;
+        }
+
+        i += sub_id.len();
+    }
+
+    return i == id_string.len();
 }
 
 fn parse_ranges(ranges_text: &str) -> Vec<Range<i64>> {
@@ -92,11 +133,25 @@ mod tests {
     #[case(11, false)]
     #[case(6464, false)]
     #[case(123123, false)]
-    fn test_is_valid_id(#[case] id: i64, #[case] expected_is_valid: bool) {
-        // Arrange
-
+    #[case(123123123, true)]
+    fn test_is_valid_id_part1(#[case] id: i64, #[case] expected_is_valid: bool) {
         // Act
         let actual: bool = is_valid_id_part1(id);
+
+        // Assert
+        assert_eq!(actual, expected_is_valid);
+    }
+
+    #[rstest]
+    #[case(1, true)]
+    #[case(12, true)]
+    #[case(11, false)]
+    #[case(6464, false)]
+    #[case(123123, false)]
+    #[case(123123123, false)]
+    fn test_is_valid_id_part2(#[case] id: i64, #[case] expected_is_valid: bool) {
+        // Act
+        let actual: bool = is_valid_id_part2(id);
 
         // Assert
         assert_eq!(actual, expected_is_valid);
