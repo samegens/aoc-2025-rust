@@ -17,4 +17,8 @@ impl InputReader {
     pub fn lines<'a>(&'a self) -> Lines<'a> {
         self.input.lines()
     }
+
+    pub fn input(&self) -> String {
+        self.input.to_string()
+    }
 }

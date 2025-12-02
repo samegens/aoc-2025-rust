@@ -1,0 +1,9 @@
+[package]
+name = "day02"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+common = { path = "../common" }
+rstest = "0.26.1"
+substring = "1.4.5"
