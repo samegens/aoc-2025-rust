@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 common = { path = "../common" }
 rstest = "0.26.1"
+substring = "1.4.5"
