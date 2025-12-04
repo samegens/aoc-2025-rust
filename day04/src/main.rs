@@ -1,4 +1,4 @@
-use common::{Grid, InputReader};
+use common::{Grid, InputReader, Point};
 use std::str::Lines;
 
 fn main() {
@@ -9,15 +9,27 @@ fn main() {
 
 fn solve_part1(lines: Lines) -> usize {
     let grid: Grid<char> = Grid::parse(lines);
-    count_nr_accessable_rolls(grid)
+    get_accessable_rolls(&grid).len()
 }
 
-fn solve_part2(_lines: Lines) -> i64 {
-    0
+fn solve_part2(lines: Lines) -> usize {
+    let mut grid: Grid<char> = Grid::parse(lines);
+    let mut nr_rolls_removed = 0;
+
+    loop {
+        let accessable_rolls = get_accessable_rolls(&grid);
+        if accessable_rolls.len() == 0 {
+            break;
+        }
+        remove_positions(&mut grid, &accessable_rolls);
+        nr_rolls_removed += accessable_rolls.len();
+    }
+
+    nr_rolls_removed
 }
 
-fn count_nr_accessable_rolls(grid: Grid<char>) -> usize {
-    let mut nr_accessable_rolls: usize = 0;
+fn get_accessable_rolls(grid: &Grid<char>) -> Vec<Point> {
+    let mut accessable_rolls: Vec<Point> = vec![];
     const NEIGHBOUR_LIMIT: usize = 4;
 
     for x in 0..grid.width() {
@@ -25,13 +37,19 @@ fn count_nr_accessable_rolls(grid: Grid<char>) -> usize {
             if *grid.at(x, y).unwrap() == '@' {
                 let nr_neighbours: usize = count_neighbours(&grid, x, y);
                 if nr_neighbours < NEIGHBOUR_LIMIT {
-                    nr_accessable_rolls += 1;
+                    accessable_rolls.push(Point::new(x as i64, y as i64));
                 }
             }
         }
     }
 
-    nr_accessable_rolls
+    accessable_rolls
+}
+
+fn remove_positions(grid: &mut Grid<char>, positions: &Vec<Point>) {
+    for pos in positions {
+        grid.remove_at(pos);
+    }
 }
 
 fn count_neighbours(grid: &Grid<char>, x: usize, y: usize) -> usize {
@@ -86,10 +104,10 @@ mod tests {
     #[test]
     fn test_solve_part2() {
         // Arrange
-        let expected: i64 = 0;
+        let expected: usize = 43;
 
         // Act
-        let actual: i64 = solve_part2(INPUT.lines());
+        let actual: usize = solve_part2(INPUT.lines());
 
         // Assert
         assert_eq!(actual, expected);

@@ -1,11 +1,15 @@
 use std::str::Lines;
 
+use crate::Point;
+
 #[derive(Debug, PartialEq)]
 pub struct Grid<T> {
-    data: Vec<Vec<T>>
+    data: Vec<Vec<T>>,
 }
 
-impl<T> Grid<T> where T: From<char>, // Ensures T can be constructed from a char
+impl<T> Grid<T>
+where
+    T: From<char>, // Ensures T can be constructed from a char
 {
     pub fn parse(lines: Lines) -> Self {
         let data = lines
@@ -15,9 +19,7 @@ impl<T> Grid<T> where T: From<char>, // Ensures T can be constructed from a char
     }
 
     pub fn at(&self, x: usize, y: usize) -> Option<&T> {
-        self.data
-            .get(y)
-            .and_then(|row| row.get(x))
+        self.data.get(y).and_then(|row| row.get(x))
     }
 
     pub fn width(&self) -> usize {
@@ -26,6 +28,10 @@ impl<T> Grid<T> where T: From<char>, // Ensures T can be constructed from a char
 
     pub fn height(&self) -> usize {
         self.data.len() // Number of rows in the grid
+    }
+
+    pub fn remove_at(&mut self, pos: &Point) {
+        self.data[pos.y as usize][pos.x as usize] = T::from('.');
     }
 }
 
