@@ -48,7 +48,7 @@ fn get_accessable_rolls(grid: &Grid<char>) -> Vec<Point> {
 
 fn remove_positions(grid: &mut Grid<char>, positions: &Vec<Point>) {
     for pos in positions {
-        grid.remove_at(pos);
+        grid.remove_at(pos, '.');
     }
 }
 

@@ -30,8 +30,8 @@ where
         self.data.len() // Number of rows in the grid
     }
 
-    pub fn remove_at(&mut self, pos: &Point) {
-        self.data[pos.y as usize][pos.x as usize] = T::from('.');
+    pub fn remove_at(&mut self, pos: &Point, clear_char: T) {
+        self.data[pos.y as usize][pos.x as usize] = clear_char;
     }
 }
 
@@ -90,5 +90,18 @@ mod tests {
         assert_eq!(grid.width(), 0);
         assert_eq!(grid.height(), 0);
         assert_eq!(grid.at(0, 0), None);
+    }
+
+    #[test]
+    fn test_remove_at() {
+        // Arrange
+        let input = "123\n456\n789\n";
+        let mut grid: Grid<char> = Grid::parse(input.lines());
+
+        // Act
+        grid.remove_at(&Point::new(0, 0), '.');
+
+        // Assert
+        assert_eq!(*grid.at(0, 0).unwrap(), '.');
     }
 }
