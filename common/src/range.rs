@@ -42,13 +42,23 @@ where
         n >= self.start && n < self.start + self.length
     }
 
+    pub fn contains_range(&self, other: &Range<T>) -> bool {
+        other.start() >= self.start()
+            && other.start() < self.end()
+            && other.end() > self.start()
+            && other.end() <= self.end()
+    }
+
     /// Check if this range overlaps with another range.
     pub fn overlaps(&self, other: &Range<T>) -> bool {
         self.start < other.end() && other.start < self.end()
     }
 
-    pub fn shifted(&self, delta: T) -> Self{
-        Range { start: self.start + delta, length: self.length }
+    pub fn shifted(&self, delta: T) -> Self {
+        Range {
+            start: self.start + delta,
+            length: self.length,
+        }
     }
 
     /// Split the range `self` into non-overlapping parts where the union of the parts
@@ -64,8 +74,16 @@ where
         }
 
         // Calculate the overlap between `self` and `other`
-        let overlap_start = if self.start > other.start { self.start } else { other.start };
-        let overlap_end = if self.end() < other.end() { self.end() } else { other.end() };
+        let overlap_start = if self.start > other.start {
+            self.start
+        } else {
+            other.start
+        };
+        let overlap_end = if self.end() < other.end() {
+            self.end()
+        } else {
+            other.end()
+        };
 
         // Add the non-overlapping part of `self` before the overlap (if any)
         if self.start < overlap_start {
@@ -113,7 +131,10 @@ where
 
             // Add the non-overlapping part before the overlap (if any)
             if current_range.start < overlap_start {
-                result.push(Range::new(current_range.start, overlap_start - current_range.start));
+                result.push(Range::new(
+                    current_range.start,
+                    overlap_start - current_range.start,
+                ));
             }
 
             // Add the overlapping part
@@ -134,6 +155,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use rstest::rstest;
+
     use super::*;
 
     #[test]
@@ -154,16 +177,16 @@ mod tests {
     fn test_split_full_overlap() {
         // Arrange
         let range1 = Range::new(10, 10); // Range from 10 to 20
-        let range2 = Range::new(12, 5);  // Range from 12 to 17 (fully inside range1)
+        let range2 = Range::new(12, 5); // Range from 12 to 17 (fully inside range1)
 
         // Act
         let actual = range1.split(&range2);
 
         // Assert
         assert_eq!(actual.len(), 3);
-        assert_eq!(actual[0], Range::new(10, 2));  // Non-overlapping part of range1 (before overlap)
-        assert_eq!(actual[1], Range::new(12, 5));  // Overlapping part
-        assert_eq!(actual[2], Range::new(17, 3));  // Non-overlapping part of range1 (after overlap)
+        assert_eq!(actual[0], Range::new(10, 2)); // Non-overlapping part of range1 (before overlap)
+        assert_eq!(actual[1], Range::new(12, 5)); // Overlapping part
+        assert_eq!(actual[2], Range::new(17, 3)); // Non-overlapping part of range1 (after overlap)
     }
 
     #[test]
@@ -213,18 +236,30 @@ mod tests {
     fn test_split_on_ranges() {
         // Arrange
         let range_to_split = Range::new(74, 14);
-        let ranges = vec![
-            Range::new(77, 23),
-            Range::new(45, 19),
-            Range::new(64, 13)
-        ];
-        let expected = vec![
-            Range::new(74, 3),
-            Range::new(77, 11)
-        ];
+        let ranges = vec![Range::new(77, 23), Range::new(45, 19), Range::new(64, 13)];
+        let expected = vec![Range::new(74, 3), Range::new(77, 11)];
 
         // Act
         let actual = range_to_split.split_on_ranges(ranges);
+
+        // Assert
+        assert_eq!(actual, expected);
+    }
+
+    #[rstest]
+    #[case(Range::new(0, 1), Range::new(0, 1), true)]
+    #[case(Range::new(0, 1), Range::new(1, 1), false)]
+    #[case(Range::new(1, 1), Range::new(0, 1), false)]
+    #[case(Range::new(0, 3), Range::new(0, 4), false)]
+    #[case(Range::new(0, 3), Range::new(1, 2), true)]
+    #[case(Range::new(1, 3), Range::new(0, 4), false)]
+    fn test_contains_range(
+        #[case] first_range: Range<i64>,
+        #[case] second_range: Range<i64>,
+        #[case] expected: bool,
+    ) {
+        // Act
+        let actual: bool = first_range.contains_range(&second_range);
 
         // Assert
         assert_eq!(actual, expected);
