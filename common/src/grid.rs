@@ -22,6 +22,10 @@ where
         self.data.get(y).and_then(|row| row.get(x))
     }
 
+    pub fn at_point(&self, p: &Point) -> Option<&T> {
+        self.at(p.x as usize, p.y as usize)
+    }
+
     pub fn width(&self) -> usize {
         self.data.first().map_or(0, |row| row.len())
     }
