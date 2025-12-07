@@ -1,5 +1,5 @@
 use common::{Grid, InputReader, Point};
-use std::{collections::HashSet, str::Lines};
+use std::{collections::HashMap, str::Lines};
 
 fn main() {
     let input_reader: InputReader = InputReader::new(7);
@@ -10,28 +10,67 @@ fn main() {
 fn solve_part1(lines: Lines) -> i64 {
     let manifold: Grid<char> = Grid::parse(lines);
     let start: Point = get_start_point(&manifold);
-    let mut visited_splitters: HashSet<Point> = HashSet::new();
+    let mut visited_splitters: HashMap<Point, i64> = HashMap::new();
 
     follow_beam(start, &mut visited_splitters, &manifold);
 
     visited_splitters.len() as i64
 }
 
-fn follow_beam(start: Point, visited_splitters: &mut HashSet<Point>, manifold: &Grid<char>) {
+fn solve_part2(lines: Lines) -> i64 {
+    let manifold: Grid<char> = Grid::parse(lines);
+    let start: Point = get_start_point(&manifold);
+    let mut visited_splitters: HashMap<Point, i64> = HashMap::new();
+
+    follow_beam(start, &mut visited_splitters, &manifold)
+}
+
+/// Recursively follows a beam through the manifold grid, counting the number of distinct paths.
+///
+/// The beam moves downward (y+1) from the start point and behaves differently based on the character encountered:
+/// - `'.'`: Empty space - the beam continues moving downward
+/// - `'^'`: Splitter - the beam splits into two paths going left (x-1) and right (x+1)
+/// - Out of bounds: Represents the end of a path (returns 1)
+///
+/// # Arguments
+///
+/// * `start` - The current position of the beam
+/// * `visited_splitters` - Cache of previously visited splitters and their total path counts
+/// * `manifold` - The grid containing the beam path layout
+///
+/// # Returns
+///
+/// The total number of distinct paths from this point to the edge(s) of the grid.
+/// When a splitter is encountered, the return value is the sum of paths from both branches.
+/// When reaching the edge of the grid, returns 1 (one path).
+///
+/// # Memoization
+///
+/// Results are cached in `visited_splitters` to avoid recalculating paths from the same splitter.
+fn follow_beam(
+    start: Point,
+    visited_splitters: &mut HashMap<Point, i64>,
+    manifold: &Grid<char>,
+) -> i64 {
     let next_point = start.translate(0, 1);
     if let Some(ch) = manifold.at_point(&next_point) {
         if *ch == '.' {
-            follow_beam(next_point, visited_splitters, manifold);
+            return follow_beam(next_point, visited_splitters, manifold);
         } else if *ch == '^' {
-            if !visited_splitters.contains(&next_point) {
-                visited_splitters.insert(next_point);
+            if !visited_splitters.contains_key(&next_point) {
                 let left_point = next_point.translate(-1, 0);
-                follow_beam(left_point, visited_splitters, manifold);
                 let right_point = next_point.translate(1, 0);
-                follow_beam(right_point, visited_splitters, manifold);
+                let nr_paths = follow_beam(left_point, visited_splitters, manifold)
+                    + follow_beam(right_point, visited_splitters, manifold);
+                visited_splitters.insert(next_point, nr_paths);
+                return nr_paths;
+            } else {
+                return visited_splitters[&next_point];
             }
         }
     }
+
+    1
 }
 
 fn get_start_point(manifold: &Grid<char>) -> Point {
@@ -44,10 +83,6 @@ fn get_start_point(manifold: &Grid<char>) -> Point {
     }
 
     Point::new(0, 0)
-}
-
-fn solve_part2(_: Lines) -> i64 {
-    0
 }
 
 #[cfg(test)]
@@ -87,7 +122,7 @@ mod tests {
     #[test]
     fn test_solve_part2() {
         // Arrange
-        let expected: i64 = 0;
+        let expected: i64 = 40;
 
         // Act
         let actual: i64 = solve_part2(INPUT.lines());
