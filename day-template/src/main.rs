@@ -7,11 +7,11 @@ fn main() {
     println!("Part 2: {}", solve_part2(input_reader.lines()));
 }
 
-fn solve_part1(_: Lines) -> i64 {
+fn solve_part1(_lines: Lines) -> i64 {
     0
 }
 
-fn solve_part2(_: Lines) -> i64 {
+fn solve_part2(_lines: Lines) -> i64 {
     0
 }
 
