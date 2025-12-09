@@ -7,6 +7,9 @@ pub use grid::Grid;
 mod point;
 pub use point::Point;
 
+mod point3d;
+pub use point3d::Point3d;
+
 mod string_utils;
 pub use string_utils::*;
 
