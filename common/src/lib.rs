@@ -10,6 +10,9 @@ pub use point::Point;
 mod point3d;
 pub use point3d::Point3d;
 
+mod rect;
+pub use rect::Rect;
+
 mod string_utils;
 pub use string_utils::*;
 
