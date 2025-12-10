@@ -1,6 +1,7 @@
 mod machine;
 
-use common::{InputReader, SequenceGenerator};
+use common::InputReader;
+use good_lp::*;
 use machine::Machine;
 use regex::Regex;
 use std::str::Lines;
@@ -17,8 +18,10 @@ fn solve_part1(lines: Lines) -> i64 {
         .sum()
 }
 
-fn solve_part2(_lines: Lines) -> i64 {
-    0
+fn solve_part2(lines: Lines) -> i64 {
+    lines
+        .map(|line| find_min_number_of_button_presses_part2(&parse_line(line)))
+        .sum()
 }
 
 fn parse_line(line: &str) -> Machine {
@@ -73,6 +76,48 @@ fn find_min_number_of_button_presses(machine: &mut Machine) -> i64 {
     min_nr_button_presses
 }
 
+fn find_min_number_of_button_presses_part2(machine: &Machine) -> i64 {
+    let wiring_schematics: &[Vec<i64>] = machine.wiring_schematics();
+    let target_joltages: &[i64] = machine.joltage_requirements();
+
+    // Create variables storage
+    let mut vars = ProblemVariables::new();
+
+    // Create variables for each button (how many times pressed)
+    let button_vars: Vec<Variable> = (0..wiring_schematics.len())
+        .map(|_| vars.add(variable().integer().min(0)))
+        .collect();
+
+    // Build objective: minimize total button presses
+    let objective: Expression = button_vars.iter().sum();
+
+    // Start building problem
+    let mut problem = vars.minimise(objective).using(default_solver);
+
+    // For each counter, sum of button presses must equal target
+    for (joltage_idx, &target_joltage) in target_joltages.iter().enumerate() {
+        let constraint: Expression = wiring_schematics
+            .iter()
+            .enumerate()
+            .filter(|(_button_idx, button)| button.contains(&(joltage_idx as i64)))
+            .map(|(button_idx, _button)| button_vars[button_idx])
+            .sum();
+
+        problem = problem.with(constraint.eq(target_joltage as i32));
+    }
+
+    // Solve
+    match problem.solve() {
+        Ok(solution) => button_vars
+            .iter()
+            .map(|&variable| solution.value(variable).round() as i64)
+            .sum::<i64>(),
+        Err(e) => {
+            panic!("No solution found: {:?}", e);
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -97,7 +142,7 @@ mod tests {
     #[test]
     fn test_solve_part2() {
         // Arrange
-        let expected: i64 = 0;
+        let expected: i64 = 10 + 12 + 11;
 
         // Act
         let actual: i64 = solve_part2(INPUT.lines());

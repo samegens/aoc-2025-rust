@@ -1,0 +1,60 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug day10",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=day10",
+                    "--package=day10"
+                ],
+                "filter": {
+                    "name": "day10",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}/day10"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug day10 (release)",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--release",
+                    "--bin=day10",
+                    "--package=day10"
+                ],
+                "filter": {
+                    "name": "day10",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug day10 tests",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--package=day10"
+                ],
+                "filter": {
+                    "name": "day10",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

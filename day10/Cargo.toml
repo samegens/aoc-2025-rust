@@ -7,3 +7,4 @@ edition = "2024"
 common = { path = "../common" }
 regex = "1.12.2"
 rstest = "0.26.1"
+good_lp = { version = "1.7", default-features = false, features = ["minilp"] }

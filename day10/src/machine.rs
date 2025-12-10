@@ -11,6 +11,10 @@ impl Machine {
         &self.wiring_schematics
     }
 
+    pub fn joltage_requirements(&self) -> &[i64] {
+        &self.joltage_requirements
+    }
+
     pub fn new(
         light_diagram: &Vec<bool>,
         wiring_schematics: &Vec<Vec<i64>>,
