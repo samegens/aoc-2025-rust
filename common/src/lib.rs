@@ -18,3 +18,6 @@ pub use string_utils::*;
 
 mod range;
 pub use range::Range;
+
+mod sequence_generator;
+pub use sequence_generator::SequenceGenerator;
