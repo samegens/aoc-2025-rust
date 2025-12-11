@@ -1,6 +1,9 @@
 mod input_reader;
 pub use input_reader::InputReader;
 
+mod directed_graph;
+pub use directed_graph::DirectedGraph;
+
 mod grid;
 pub use grid::Grid;
 
