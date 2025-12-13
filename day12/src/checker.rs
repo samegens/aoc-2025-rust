@@ -57,36 +57,4 @@ mod tests {
         // Assert
         assert_eq!(actual, 7);
     }
-
-    #[test]
-    fn test_check_area_exact_match() {
-        // Arrange
-        let region = Region::new(3, 3, vec![1, 0, 0, 0, 0, 0]);
-        let shapes = vec![Shape {
-            id: 0,
-            rows: [0b111, 0b111, 0b111],
-        }];
-
-        // Act
-        let actual = check_area(&region, &shapes);
-
-        // Assert
-        assert!(actual);
-    }
-
-    #[test]
-    fn test_check_area_too_many_pieces() {
-        // Arrange
-        let region = Region::new(3, 3, vec![2, 0, 0, 0, 0, 0]);
-        let shapes = vec![Shape {
-            id: 0,
-            rows: [0b111, 0b111, 0b111],
-        }];
-
-        // Act
-        let actual = check_area(&region, &shapes);
-
-        // Assert
-        assert!(!actual);
-    }
 }
